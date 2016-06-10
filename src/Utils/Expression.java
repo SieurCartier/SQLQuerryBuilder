@@ -1,14 +1,11 @@
+package Utils;
+
 import Structure.Requestable.Table;
-import Structure.Selectables.Selectable;
 
 /**
- * Created by gasto on 09/06/2016.
+ * Created by gasto on 10/06/2016.
  */
-public class SQLFunction implements Selectable {
-
-
-
-
+public class Expression implements IExpression {
     @Override
     public String toSql() {
         return null;
