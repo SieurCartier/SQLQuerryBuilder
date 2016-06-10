@@ -1,3 +1,5 @@
+package SQL;
+
 import Structure.Requestable.Table;
 import Utils.Builder;
 import Structure.Selectables.Selectable;
@@ -54,7 +56,6 @@ public class SQLQuerry {
         public SelectDistinct selectDistinctAll() {
             return Select.DISTINCT_ALL;
         }
-
 
         public SQLQuerry build() {
             return new SQLQuerry(this);

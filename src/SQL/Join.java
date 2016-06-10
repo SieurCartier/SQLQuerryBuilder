@@ -1,3 +1,6 @@
+package SQL;
+
+import SQL.From;
 import Structure.Requestable.Table;
 import Utils.IExpression;
 

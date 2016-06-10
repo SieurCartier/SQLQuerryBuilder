@@ -1,3 +1,5 @@
+package SQL;
+
 import Structure.Selectables.StringLitteral;
 import Structure.Requestable.Table;
 import Structure.Selectables.Selectable;

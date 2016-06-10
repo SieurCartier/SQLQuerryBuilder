@@ -1,3 +1,7 @@
+package SQL;
+
+import SQL.From;
+import SQL.Join;
 import Structure.Requestable.Table;
 
 /**

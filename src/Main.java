@@ -1,3 +1,5 @@
+import SQL.SQLQuerry;
+import SQL.Select;
 import Structure.Requestable.Table;
 
 /**
@@ -25,7 +27,7 @@ public class Main {
         /*
         String sql = querry.select(new Structure.Selectables.FullField(products, "name"))
                 .from(products)
-                .innerJoin(customers).On(null)
+                .innerJoin(customers).SQL.On(null)
                 .whrere(null)
                 .build();
                 */
