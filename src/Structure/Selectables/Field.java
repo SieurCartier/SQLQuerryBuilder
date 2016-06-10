@@ -1,11 +1,12 @@
 package Structure.Selectables;
 
+import Structure.Expressions.IExpression;
 import Structure.Requestable.Table;
 
 /**
  * Created by gasto on 09/06/2016.
  */
-public class Field implements Selectable {
+public class Field implements Selectable, IExpression {
 
     protected String fieldName;
 

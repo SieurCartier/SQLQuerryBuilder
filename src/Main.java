@@ -1,6 +1,7 @@
 import SQL.SQLQuerry;
 import SQL.Select;
 import Structure.Requestable.Table;
+import Structure.Expressions.Equals;
 
 /**
  * Created by Gaston on 08/06/2016.
@@ -14,10 +15,10 @@ public class Main {
         Table sells = new Table("Sells");
         Table customers = new Table("Customers");
 
-        SQLQuerry querry = Select.ALL
+        SQLQuerry querry =
+                Select.ALL
                 .from(products)
-                .join(sells)
-                .on(null)
+                .join(sells).on(new Equals(customers.getPrimaryKey(), sells.getField("customerid")))
                 .build();
 
         String sql = querry.toString();

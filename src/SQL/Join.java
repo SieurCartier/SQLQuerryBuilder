@@ -1,8 +1,8 @@
 package SQL;
 
-import SQL.From;
 import Structure.Requestable.Table;
-import Utils.IExpression;
+import Structure.Expressions.IExpression;
+import Structure.Selectables.FullField;
 
 /**
  * Created by gasto on 10/06/2016.
@@ -16,9 +16,8 @@ public class Join extends SQLQuerry.SQLQuerryBuilder {
         this.from = from;
     }
 
-    public On on(IExpression e) {
-        return null;
+    public On on(IExpression<FullField> e) {
+        return new On(this, e);
     }
-
 
 }

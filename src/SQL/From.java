@@ -1,7 +1,7 @@
 package SQL;
 
 import Structure.Requestable.Table;
-import Utils.IExpression;
+import Structure.Expressions.IExpression;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class From extends SQLQuerry.SQLQuerryBuilder {
         return new FullJoin(this, t);
     }
 
-    public Where where(IExpression e) {
+    public Where where(IExpression<?> e) {
         return new Where();
     }
 }
