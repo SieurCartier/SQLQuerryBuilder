@@ -9,9 +9,11 @@ import Structure.Requestable.Table;
 public class Field implements Selectable, IExpression {
 
     protected String fieldName;
+    protected int type;
 
-    public Field(String fieldName) {
+    public Field(String fieldName, int type) {
         this.fieldName = fieldName;
+        this.type = type;
     }
 
     @Override
@@ -24,6 +26,10 @@ public class Field implements Selectable, IExpression {
         return null;
     }
 
+    public String getFieldName() {
+        return fieldName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -31,12 +37,15 @@ public class Field implements Selectable, IExpression {
 
         Field field = (Field) o;
 
+        if (type != field.type) return false;
         return fieldName != null ? fieldName.equals(field.fieldName) : field.fieldName == null;
 
     }
 
     @Override
     public int hashCode() {
-        return fieldName != null ? fieldName.hashCode() : 0;
+        int result = fieldName != null ? fieldName.hashCode() : 0;
+        result = 31 * result + type;
+        return result;
     }
 }

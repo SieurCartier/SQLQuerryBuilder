@@ -7,11 +7,8 @@ public class StringLitteral extends Litteral<String> {
 
     public static final StringLitteral ALL = new StringLitteral("*");
 
-    private String value;
-
     public StringLitteral(String value) {
-        super();
-        this.value = value;
+        super(value);
     }
 
     @Override

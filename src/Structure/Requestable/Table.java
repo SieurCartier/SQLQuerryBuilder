@@ -2,6 +2,8 @@ package Structure.Requestable;
 
 import Structure.Selectables.Field;
 import Structure.Selectables.StringLitteral;
+import Utils.Builder;
+import Utils.PrimaryKeyAlreadyExistsException;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,15 +18,14 @@ public class Table implements Requestable {
     private Field primaryKey;
     private Dictionary<String, Field> fields = new Hashtable<>();
 
-    public final StringLitteral ALL = new StringLitteral(tableName + ".*");
+    public StringLitteral ALL;
 
-    public Table(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public Table(String tableName, String alias) {
-        this.tableName = tableName;
-        this.alias = alias;
+    public Table(TableBuilder tableBuilder) {
+        tableName = tableBuilder.tableName;
+        alias = tableBuilder.alias;
+        primaryKey = tableBuilder.primaryKey;
+        fields = tableBuilder.fields;
+        ALL = new StringLitteral(tableName + ".*");
     }
 
     public String toSql() {
@@ -52,5 +53,69 @@ public class Table implements Requestable {
 
     public Field getField(String name) {
         return fields.get(name);
+    }
+
+    public void addField(String fieldName, int type) throws PrimaryKeyAlreadyExistsException {
+        addField(fieldName, type, false);
+    }
+
+    public void addField(String fieldName, int type, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
+        addField(new Field(fieldName, type), isPrimaryKey);
+    }
+
+    public void addField(Field field) throws PrimaryKeyAlreadyExistsException {
+        addField(field, false);
+    }
+
+    public void addField(Field field, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
+        if (isPrimaryKey) {
+            if (!(primaryKey == null)) {
+                primaryKey = field;
+            } else {
+                throw new PrimaryKeyAlreadyExistsException();
+            }
+        }
+        fields.put(field.getFieldName(), field);
+    }
+
+    public static class TableBuilder implements Builder<Table> {
+
+        private String tableName;
+        private String alias;
+        private Field primaryKey;
+        private Dictionary<String, Field> fields = new Hashtable<>();
+
+        public TableBuilder(String tableName) {
+            this.tableName = tableName;
+        }
+
+        public TableBuilder addField(String fieldName, int type) throws PrimaryKeyAlreadyExistsException {
+            return addField(fieldName, type, false);
+        }
+
+        public TableBuilder addField(String fieldName, int type, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
+            return addField(new Field(fieldName, type), isPrimaryKey);
+        }
+
+        public TableBuilder addField(Field field) throws PrimaryKeyAlreadyExistsException {
+            return addField(field, false);
+        }
+
+        public TableBuilder addField(Field field, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
+            if (isPrimaryKey) {
+                if (primaryKey == null) {
+                    primaryKey = field;
+                } else {
+                    throw new PrimaryKeyAlreadyExistsException();
+                }
+            }
+            fields.put(field.getFieldName(), field);
+            return this;
+        }
+
+        @Override
+        public Table build() {
+            return new Table(this);
+        }
     }
 }

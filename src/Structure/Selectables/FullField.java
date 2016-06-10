@@ -9,8 +9,8 @@ public class FullField extends Field {
 
     protected Table relatedTable;
 
-    public FullField(Table relatedTable, String name) {
-        super(name);
+    public FullField(Table relatedTable, String name, int type) {
+        super(name, type);
         this.relatedTable = relatedTable;
     }
 
