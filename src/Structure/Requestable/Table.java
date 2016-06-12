@@ -1,12 +1,15 @@
 package Structure.Requestable;
 
 import Structure.Selectables.Field;
+import Structure.Selectables.FullField;
 import Structure.Selectables.StringLitteral;
 import Utils.Builder;
+import Utils.InexistantFieldException;
+import Utils.UnconsistentType;
 import Utils.PrimaryKeyAlreadyExistsException;
+import com.sun.istack.internal.NotNull;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * Created by gasto on 09/06/2016.
@@ -16,7 +19,8 @@ public class Table implements Requestable {
     private String tableName;
     private String alias;
     private Field primaryKey;
-    private Dictionary<String, Field> fields = new Hashtable<>();
+    private Map<String, Field> fields = new Hashtable<>();
+    private Map<Field, Set<Field>> foreignKeys = new Hashtable<>();
 
     public StringLitteral ALL;
 
@@ -25,11 +29,13 @@ public class Table implements Requestable {
         alias = tableBuilder.alias;
         primaryKey = tableBuilder.primaryKey;
         fields = tableBuilder.fields;
+        foreignKeys = tableBuilder.foreignKeys;
+
         ALL = new StringLitteral(tableName + ".*");
     }
 
     public String toSql() {
-        return tableName;
+        return tableName + ((alias != null) ? " " + alias : "");
     }
 
     @Override
@@ -47,68 +53,81 @@ public class Table implements Requestable {
         return tableName != null ? tableName.hashCode() : 0;
     }
 
-    public Field getPrimaryKey() {
-        return primaryKey;
+    public FullField getPrimaryKey() {
+        return new FullField(this, primaryKey);
     }
 
-    public Field getField(String name) {
-        return fields.get(name);
-    }
-
-    public void addField(String fieldName, int type) throws PrimaryKeyAlreadyExistsException {
-        addField(fieldName, type, false);
-    }
-
-    public void addField(String fieldName, int type, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
-        addField(new Field(fieldName, type), isPrimaryKey);
-    }
-
-    public void addField(Field field) throws PrimaryKeyAlreadyExistsException {
-        addField(field, false);
-    }
-
-    public void addField(Field field, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
-        if (isPrimaryKey) {
-            if (!(primaryKey == null)) {
-                primaryKey = field;
-            } else {
-                throw new PrimaryKeyAlreadyExistsException();
-            }
+    public FullField getField(String name) throws InexistantFieldException {
+        FullField ret = null;
+        try {
+            ret = new FullField(this, fields.get(name));
+        } catch (NullPointerException e) {
+            throw new InexistantFieldException(name);
         }
-        fields.put(field.getFieldName(), field);
+        return ret;
     }
 
     public static class TableBuilder implements Builder<Table> {
-
         private String tableName;
         private String alias;
         private Field primaryKey;
-        private Dictionary<String, Field> fields = new Hashtable<>();
+        private Map<String, Field> fields = new Hashtable<>();
+        private Map<Field, Set<Field>> foreignKeys = new Hashtable<>();
+
 
         public TableBuilder(String tableName) {
             this.tableName = tableName;
         }
 
-        public TableBuilder addField(String fieldName, int type) throws PrimaryKeyAlreadyExistsException {
-            return addField(fieldName, type, false);
+        public TableBuilder alias(String alias) {
+            this.alias = alias;
+            return this;
         }
 
-        public TableBuilder addField(String fieldName, int type, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
-            return addField(new Field(fieldName, type), isPrimaryKey);
+        @NotNull
+        public TableBuilder setPrimaryKey(String fieldname, int type) throws PrimaryKeyAlreadyExistsException {
+            return setPrimaryKey(new Field(fieldname, type));
         }
 
-        public TableBuilder addField(Field field) throws PrimaryKeyAlreadyExistsException {
-            return addField(field, false);
+        @NotNull
+        public TableBuilder setPrimaryKey(Field field) throws PrimaryKeyAlreadyExistsException {
+            if (primaryKey != null)
+                throw new PrimaryKeyAlreadyExistsException();
+
+            if (!fields.containsKey(field.getFieldName()))
+                fields.put(field.getFieldName(), field);
+
+            primaryKey = field;
+            return this;
         }
 
-        public TableBuilder addField(Field field, boolean isPrimaryKey) throws PrimaryKeyAlreadyExistsException {
-            if (isPrimaryKey) {
-                if (primaryKey == null) {
-                    primaryKey = field;
-                } else {
-                    throw new PrimaryKeyAlreadyExistsException();
-                }
-            }
+        @NotNull
+        public TableBuilder addForeignKey(String fieldName, int type, FullField references) throws UnconsistentType {
+            return addForeignKey(new Field(fieldName, type), references);
+        }
+
+        @NotNull
+        public TableBuilder addForeignKey(Field field, FullField references) throws UnconsistentType {
+            if (field.getType() != references.getType())
+                throw new UnconsistentType(field, references);
+
+            if (!fields.containsKey(field))
+                fields.put(field.getFieldName(), field);
+
+            if (!foreignKeys.containsKey(field))
+                foreignKeys.put(field, new HashSet<>());
+
+            foreignKeys.get(field).add(references);
+            return this;
+        }
+
+        @NotNull
+        public TableBuilder addField(String fieldname, int type) {
+            return addField(new Field(fieldname, type));
+        }
+
+        @NotNull
+        public TableBuilder addField(Field field) {
             fields.put(field.getFieldName(), field);
             return this;
         }

@@ -1,14 +1,13 @@
 package SQL;
 
+import SQL.Join.*;
 import Structure.Expressions.IExpression;
 import Structure.Requestable.Table;
-import Structure.Selectables.FullField;
 import Structure.Selectables.Selectable;
 import Utils.Builder;
 import com.sun.istack.internal.NotNull;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Created by gasto on 09/06/2016.
@@ -19,7 +18,7 @@ public class SQLQuerry {
     protected Set<Table> knownTables = new HashSet<>();
     protected List<Selectable> selectClauses = new LinkedList<>();
     protected Set<Table> expectedTables = new HashSet<>();
-    private Map<Table, List<Predicate<?>>> joins = new Hashtable<>();
+    private Map<Table, Set<IExpression<?>>> joins = new Hashtable<>();
     protected String querry = "";
 
     public SQLQuerry(SQLQuerryBuilder sqlQuerryBuilder) {
@@ -42,7 +41,7 @@ public class SQLQuerry {
         protected Set<Table> knownTables = new HashSet<>();
         protected List<Selectable> selectClauses = new LinkedList<>();
         protected Set<Table> expectedTables = new HashSet<>();
-        private Map<Table, List<Predicate<?>>> joins = new Hashtable<>();
+        private Map<Table, Set<IExpression<?>>> joins = new Hashtable<>();
         protected String querry = "";
 
         public abstract void init();
@@ -76,26 +75,41 @@ public class SQLQuerry {
             return this;
         }
 
-        public SQLQuerryBuilder join(Table t) {
-
-            return this;
+        public Inner join(Table t) {
+            return innerJoin(t);
         }
 
-        public SQLQuerryBuilder leftJoin(Table t) {
-            return this;
+        public Inner innerJoin(Table t) {
+            addJoin(t);
+            return new Inner(this, t);
         }
 
-        public SQLQuerryBuilder rightJoin(Table t) {
-            return this;
+        public Left leftJoin(Table t) {
+            addJoin(t);
+            return new Left(this, t);
         }
 
-        public SQLQuerryBuilder fullJoin(Table t) {
-            return this;
+        public Right rightJoin(Table t) {
+            addJoin(t);
+            return new Right(this, t);
         }
 
-        public SQLQuerryBuilder on(IExpression<FullField> e) {
-            return this;
+        public Full fullJoin(Table t) {
+            addJoin(t);
+            return new Full(this, t);
         }
+
+        public Map<Table, Set<IExpression<?>>> getJoins() {
+            return joins;
+        }
+
+        private void addJoin(Table t) {
+            if (!joins.containsKey(t))
+                joins.put(t, new HashSet<>());
+
+            knownTables.add(t);
+        }
+
 
         public SQLQuerryBuilder where(IExpression<?> e) {
             return this;

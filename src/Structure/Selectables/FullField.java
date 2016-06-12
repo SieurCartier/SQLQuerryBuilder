@@ -14,6 +14,11 @@ public class FullField extends Field {
         this.relatedTable = relatedTable;
     }
 
+    public FullField(Table relatedTable, Field field) {
+        super(field.getFieldName(), field.getType());
+        this.relatedTable = relatedTable;
+    }
+
     @Override
     public Table getRelatedTable() {
         return relatedTable;

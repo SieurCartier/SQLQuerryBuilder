@@ -30,6 +30,10 @@ public class Field implements Selectable, IExpression {
         return fieldName;
     }
 
+    public int getType() {
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -24,6 +24,11 @@ public class Select extends SQLQuerry.SQLQuerryBuilder {
         }
     }
 
+    public From from() {
+        return new From() ;
+    }
+
+
     @Override
     public void init() {
         querry = "SELECT ";
