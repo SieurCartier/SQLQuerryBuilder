@@ -2,6 +2,8 @@ package Structure.Requestable;
 
 import SQL.SQLValid;
 
+import java.util.Set;
+
 /**
  * Created by gasto on 10/06/2016.
  */
