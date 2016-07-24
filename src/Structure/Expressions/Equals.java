@@ -7,10 +7,6 @@ public class Equals extends BinaryExpression {
 
     public Equals(IExpression left, IExpression right) {
         super(left, right);
-    }
-
-    @Override
-    public String toSql() {
-        return left.toSql() + " = " + right.toSql();
+        operator = " = ";
     }
 }

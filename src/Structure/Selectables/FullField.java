@@ -1,6 +1,10 @@
 package Structure.Selectables;
 
+import Structure.Requestable.Requestable;
 import Structure.Requestable.Table;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by gasto on 09/06/2016.
@@ -20,8 +24,10 @@ public class FullField extends Field {
     }
 
     @Override
-    public Table getRelatedTable() {
-        return relatedTable;
+    public Set<Requestable> getConcernedTables() {
+        Set<Requestable> ret = new HashSet<>();
+        ret.add(relatedTable);
+        return ret;
     }
 
     @Override

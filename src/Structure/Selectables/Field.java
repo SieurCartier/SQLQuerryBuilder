@@ -1,7 +1,10 @@
 package Structure.Selectables;
 
 import Structure.Expressions.IExpression;
+import Structure.Requestable.Requestable;
 import Structure.Requestable.Table;
+
+import java.util.Set;
 
 /**
  * Created by gasto on 09/06/2016.
@@ -19,11 +22,6 @@ public class Field implements Selectable, IExpression {
     @Override
     public String toSql() {
         return fieldName;
-    }
-
-    @Override
-    public Table getRelatedTable() {
-        return null;
     }
 
     public String getFieldName() {
@@ -51,5 +49,15 @@ public class Field implements Selectable, IExpression {
         int result = fieldName != null ? fieldName.hashCode() : 0;
         result = 31 * result + type;
         return result;
+    }
+
+    @Override
+    public Set<Requestable> getRequired() {
+        return null;
+    }
+
+    @Override
+    public Set<Requestable> getConcernedTables() {
+        return null;
     }
 }

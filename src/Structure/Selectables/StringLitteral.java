@@ -11,8 +11,4 @@ public class StringLitteral extends Litteral<String> {
         super(value);
     }
 
-    @Override
-    public String toSql() {
-        return value;
-    }
 }

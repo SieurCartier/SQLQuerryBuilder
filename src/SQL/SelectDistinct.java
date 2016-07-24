@@ -10,19 +10,10 @@ import java.util.List;
  */
 public class SelectDistinct extends Select {
 
-    public static final SQLQuerry.SQLQuerryBuilder ALL = new SelectDistinct(StringLitteral.ALL);
+    public static final SelectDistinct ALL = new SelectDistinct(StringLitteral.ALL);
 
-    public SelectDistinct(Selectable s) {
-        super(s);
-    }
-
-    public SelectDistinct(List<Selectable> ls) {
+    public SelectDistinct(Selectable... ls) {
         super(ls);
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        querry += "DISTINCT ";
+        inBetween = "DISTINCT ";
     }
 }

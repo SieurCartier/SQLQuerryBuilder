@@ -1,4 +1,4 @@
-package SQL.Join;
+package SQL;
 
 import Structure.Requestable.Table;
 
@@ -6,12 +6,12 @@ import Structure.Requestable.Table;
  * Created by gasto on 12/06/2016.
  */
 public class Union extends Join {
-    public Union(Table concernedTable) {
-        super(concernedTable);
+    public Union(SQLQuerry.SQLQuerryBuilder builder, Table t) {
+        super(builder, t);
     }
 
     @Override
     public String toSql() {
-        return "UNION " + super.toSql();
+        return SqlBefore() + "UNION " + super.toSql();
     }
 }

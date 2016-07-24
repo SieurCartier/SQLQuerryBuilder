@@ -1,3 +1,5 @@
+import SQL.Or;
+import Structure.Expressions.LessThan;
 import SQL.SQLQuerry;
 import SQL.Select;
 import Structure.Expressions.Equals;
@@ -47,19 +49,24 @@ public class Main {
             SQLQuerry querry = Select.ALL
                     .from(products)
                     .join(sells).on(new Equals(customers.getPrimaryKey(), sells.getField("idCustomer")))
-                    .where(new GreaterThan(sells.getField("price"), new NumberLitteral(19)))
+                    .where(new GreaterThan(sells.getField("price"), 19))
+                    .and(new Or(new GreaterThan(sells.getField("price"), 19), new LessThan(products.getField("unitPrice"), 5)))
                     .build();
 
 
             String sql = querry.toString();
+            System.out.println(sql);
 
 
-            SQLQuerry q2 = new Select(products.getField("unitPrice"))
+            SQLQuerry q2 = new Select(products.getField("unitPrice"), products.getField("name"))
                     .from(products)
-                    .where(new GreaterThan(products.getField("unitPrice"), new NumberLitteral(19)))
+                    .where(new GreaterThan(products.getField("unitPrice"), 19))
+                    .and(new LessThan(products.getField("unitPrice"), 5))
                     .build();
 
             String sq2 = q2.toString();
+            System.out.println(sq2);
+
 
         /*
         String sql = querry.select(new Structure.Selectables.FullField(products, "name"))
